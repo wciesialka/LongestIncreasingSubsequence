@@ -1,3 +1,7 @@
+# User defined
+*.txt
+.vscode/
+
 # Prerequisites
 *.d
 
