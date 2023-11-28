@@ -72,6 +72,43 @@ int get_longest_increasing_subsequence(int *sequence, int *predecessors, int cur
     return subsequence_index + 1;
 }
 
+void generate_L_table(int *sequence, int size, int *L, int *predecessors)
+{
+    /**
+     * @brief Generate the L-table and predecessor table.
+     *
+     * @param[in] sequence Main sequence.
+     * @param[in] size Length of the sequence.
+     * @param[out] L L-table.
+     * @param[out] predecessors Predecessor table.
+     */
+    L[0] = 1;
+    predecessors[0] = 0;
+
+    // Generate L-table
+    for (int i = 1; i < size; i++)
+    {
+        // Find max predecessor
+        int max_predecessor = 0;
+        int max_predecessor_index = i;
+        for (int j = i - 1; j >= 0; j--)
+        {
+            // First, check that it's a predecessor.
+            if (sequence[j] < sequence[i])
+            {
+                // Then, check to see if it has a larger L-value
+                if (L[j] > max_predecessor)
+                {
+                    max_predecessor = L[j];
+                    max_predecessor_index = j;
+                }
+            }
+        }
+        L[i] = max_predecessor + 1;
+        predecessors[i] = max_predecessor_index;
+    }
+}
+
 int main()
 {
     int *input = new int[MAX_ARRAY_SIZE];
@@ -101,33 +138,8 @@ int main()
               << std::endl;
 
     int *L = new int[size];
-    L[0] = 1;
-
     int *predecessors = new int[size];
-    predecessors[0] = 0;
-
-    // Generate L-table
-    for (int i = 1; i < size; i++)
-    {
-        // Find max predecessor
-        int max_predecessor = 0;
-        int max_predecessor_index = i;
-        for (int j = i - 1; j >= 0; j--)
-        {
-            // First, check that it's a predecessor.
-            if (input[j] < input[i])
-            {
-                // Then, check to see if it has a larger L-value
-                if (L[j] > max_predecessor)
-                {
-                    max_predecessor = L[j];
-                    max_predecessor_index = j;
-                }
-            }
-        }
-        L[i] = max_predecessor + 1;
-        predecessors[i] = max_predecessor_index;
-    }
+    generate_L_table(input, size, L, predecessors);
 
     // Print the table and find the largest L-value
     std::cout << "L Table:" << std::endl;
@@ -143,14 +155,16 @@ int main()
             longest_subsequence_index = i;
         }
     }
-    std::cout << std::endl << std::endl;
+    std::cout << std::endl
+              << std::endl;
 
     // Print the Longest Increasing Subsequence
-    int* subsequence = new int[longest_subsequence_length];
+    int *subsequence = new int[longest_subsequence_length];
     get_longest_increasing_subsequence(input, predecessors, longest_subsequence_index, subsequence);
 
     std::cout << "Longest Increasing Subsequence:" << std::endl;
-    for(int i = 0; i < longest_subsequence_length; i++){
+    for (int i = 0; i < longest_subsequence_length; i++)
+    {
         std::cout << subsequence[i] << " ";
     }
     std::cout << std::endl;
